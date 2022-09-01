@@ -45,6 +45,9 @@ const server = http.createServer((req, res) => {
         var img = fs.readFileSync('./favicon.png');
         res.writeHead(200, { "Content-type": "image/png" });
         res.end(img, "binary");
+    } else if (req.url == "/avax" || req.url == "/bnb" || req.url == "/eth") {
+        res.write("More cryptocurrencies are coming soon!");
+        res.end();
     } else {
         res.write("Oops. This page does not exist!");
         res.end();
