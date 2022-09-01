@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoPredict - Decentralized Prediction Market</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="icon" type="image/x-icon" href="/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script type="text/javascript" src="/node_modules/web3/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <meta name="title" content="CryptoPredict - Decentralized Prediction Market">
+    <meta name="description"
+        content="CryptoPredict is a Decentralized Prediction Market on the Arbitrum blockchain. Predict the price movements of Bitcoin in the next hour and win crypto!">
+    <meta name="keywords"
+        content="prediction market, crypto predict, crypto prediction, crypto prediction market, bitcoin prediction, bitcoin predict, decentralized prediction market, CryptoPredict">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="English">
+
+    <style>
+        #header-image {
+            -webkit-animation: mover 2s infinite alternate;
+            animation: mover 2s infinite alternate;
+        }
+
+        @-webkit-keyframes mover {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes mover {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-20px);
+            }
+        }
+    </style>
+    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>-->
+</head>
+
+<body class="bg-dark">
+
+    <div class="container">
+        <header
+            class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+                <img src="cryptopredictlogo2.png" alt="CryptoPredict Logo" style="width:100%;">
+            </a>
+
+            <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://bitcoin.org/img/icons/opengraph.png?1657703267" style="width:50px;">
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="padding:10px;">
+                    <li>
+                        <a href="/ethereum">
+                            <img src="https://d33wubrfki0l68.cloudfront.net/fcd4ecd90386aeb50a235ddc4f0063cfbb8a7b66/4295e/static/bfc04ac72981166c740b189463e1f74c/40129/eth-diamond-black-white.jpg"
+                                style="width:50px;">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/bnb">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/f/fc/Binance-coin-bnb-logo.png"
+                                style="width:50px;">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/avax">
+                            <img src="https://assets-global.website-files.com/6059b554e81c705f9dd2dd32/60ec6a944b52e3e96e16af68_Avalanche_Square_Red_Circle.png"
+                                style="width:50px;">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-3 text-end">
+                <button onclick="connectWallet()" type="button" class="btn btn-primary me-2">Connect Wallet</button>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Account
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" style="padding:10px;">
+                        <li>
+                            <p id="wallet_address">Connect your wallet to see account details</p>
+                        </li>
+                        <li>
+                            <p id="balance"></p>
+                        </li>
+                        <li></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <div class="px-4 py-5 my-5 text-center">
+        <img id="header-image" class="d-block mx-auto mb-4" src="./bitcoin_header.svg" alt="" width="200">
+        <h1 class="display-5 fw-bold text-light">Decentralized Prediction Market</h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4 text-light">Decentralized and secure Prediction Market on the <b>Arbitrum Rinkeby
+                    Testnet</b>.<br> Predict the price movements of Bitcoin in the next hour and <b>win crypto
+                    rewards</b>!
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a href="#rounds"><button type="button" class="btn btn-primary btn-lg px-4 gap-3">Explore</button></a>
+                <button onclick="createRound()" style="display:none;" id="create-round" type="button"
+                    class="btn btn-primary btn-lg px-4 gap-3">Create Round</button>
+                <button onclick="announceWinningSide()" style="display:none;" id="announce-winning-side" type="button"
+                    class="btn btn-primary btn-lg px-4 gap-3">Announce Winning Side</button>
+                <button onclick="claimTreasury()" style="display:none;" id="claim-treasury" type="button"
+                    class="btn btn-primary btn-lg px-4 gap-3">Claim Treasury</button>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div id="rounds" class="card col-sm-6" style="width: 100%;max-width: 400px;margin:auto;">
+            <div class="card-body">
+                <h5 class="card-title" id="current-round">Current Round - #</h5>
+                <h5 class="card-title" id="startingPrice">Will the Bitcoin price increase or decrease in the next hour
+                    from $</h5>
+                <p class="card-text" id="btc-price">BTC Price: $</p>
+                <p class="card-text" id="prize-pool">Prize Pool: ETH </p>
+                <p class="card-text" id="timer">Time Left: </p>
+                <a style="width:45%;" class="btn btn-success" id="upPayout">Predict Up -
+                    x</a>
+                <a style="width:45%;" class="btn btn-danger" id="downPayout">Predict Down
+                    -
+                    x</a>
+                <p style="color:green;" id="success-info"></p>
+                <a style="width:100%;display:none;" onclick="claimReward()" class="btn btn-primary"
+                    id="claimReward">Claim
+                    Reward</a>
+            </div>
+        </div>
+
+        <div id="rounds" class="card col-sm-6" style="width: 100%;max-width: 400px;margin:auto;">
+            <div class="card-body">
+                <h5 class="card-title" id="next-round">Next Round - #</h5>
+                <h5 class="card-title">Will the Bitcoin price increase or decrease in the next hour?</h5>
+                <p class="card-text" id="btc-price2">BTC Price: $</p>
+                <p class="card-text" id="prize-pool-next">Prize Pool: ETH </p>
+                <p class="card-text" id="timer-next">Time Left: </p>
+                <input id="bet-amount" type="number" style="width:100%;margin-bottom:10px;"
+                    placeholder="Amount of ETH...">
+                <a style="width:45%;" onclick="bullBet()" class="btn btn-success" id="upPayoutNext">Predict Up - x</a>
+                <a style="width:45%;" onclick="bearBet()" class="btn btn-danger" id="downPayoutNext">Predict Down -
+                    x</a>
+                <p style="color:green;" id="success-info"></p>
+                <a style="width:100%;display:none;" onclick="claimReward()" class="btn btn-primary"
+                    id="claimReward">Claim
+                    Reward</a>
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+
+    <!-- TradingView Widget BEGIN -->
+    <div class="tradingview-widget-container" style="width:100%;max-width:700px;margin:auto;">
+        <div id="tradingview_e9dda"></div>
+        <div class="tradingview-widget-copyright"><a
+                href="https://www.tradingview.com/symbols/BTCUSD/?exchange=COINBASE" rel="noopener"
+                target="_blank"><span class="blue-text">BTCUSD Chart</span></a> by TradingView</div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+            new TradingView.widget(
+                {
+                    "width": 400,
+                    "height": 610,
+                    "symbol": "COINBASE:BTCUSD",
+                    "interval": "60",
+                    "timezone": "Etc/UTC",
+                    "theme": "light",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "container_id": "tradingview_e9dda"
+                }
+            );
+        </script>
+    </div>
+    <!-- TradingView Widget END -->
+
+    <div class="container">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <p class="col-md-4 mb-0 text-muted">CryptoPredict</p>
+
+            <a href="/"
+                class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+                <img src="cryptopredictlogo.png" alt="CryptoPredict Logo" style="width:100%;max-width:100px;">
+            </a>
+
+            <ul class="nav col-md-4 justify-content-end">
+                <li class="nav-item"><a target="_blank"
+                        href="https://testnet.arbiscan.io/address/0x8bd313e161b6334cfec9fed153bc6dd8a506d4e7"
+                        class="nav-link text-muted px-2">Contract</a></li>
+                <li class="nav-item"><a target="_blank" href="https://twitter.com/CryptoPredict__"
+                        class="nav-link px-2 text-muted"><i class="fa fa-brands fa-twitter"></i></a>
+                </li>
+                <li class="nav-item"><a target="_blank" href="https://t.me/CryptoPredictOfficial"
+                        class="nav-link text-muted px-2"><i class="fa fa-brands fa-telegram"></i></a></li>
+            </ul>
+        </footer>
+    </div>
+
+    <script>
+        //Script relating to crypto wallets and smart contract transactions
+        let wallet_address;
+        let closingTime;
+        let closingTimeOld;
+        let currentTime;
+        let walletAddressP = document.getElementById("wallet_address");
+        let balanceP = document.getElementById("balance");
+        let bitcoinPrice = document.getElementById("btc-price");
+        let bitcoinPrice2 = document.getElementById("btc-price2");
+        let upPayoutBtn = document.getElementById("upPayout");
+        let downPayoutBtn = document.getElementById("downPayout");
+        let upPayoutBtnNext = document.getElementById("upPayoutNext");
+        let downPayoutBtnNext = document.getElementById("downPayoutNext");
+        let currentRoundP = document.getElementById("current-round");
+        let nextRoundP = document.getElementById("next-round");
+        let prizePoolP = document.getElementById("prize-pool");
+        let nextPrizePoolP = document.getElementById("prize-pool-next");
+        let betAmount = document.getElementById("bet-amount");
+        let successInfoP = document.getElementById("success-info");
+        let claimRewardBtn = document.getElementById("claimReward");
+        let createRoundBtn = document.getElementById("create-round");
+        let announceWinningSideBtn = document.getElementById("announce-winning-side");
+        let claimTreasuryBtn = document.getElementById("claim-treasury");
+
+        var contractABI = [
+            {
+                "inputs": [],
+                "name": "bearBet",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "bullBet",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "claimReward",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_minBetAmount",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "_treasuryFee",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "claimer",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "rewardAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "ClaimReward",
+                "type": "event"
+            },
+            {
+                "inputs": [],
+                "name": "claimTreasury",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "createRound",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "address",
+                        "name": "predictor",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "amountBet",
+                        "type": "uint256"
+                    },
+                    {
+                        "indexed": false,
+                        "internalType": "bool",
+                        "name": "bull_predicted",
+                        "type": "bool"
+                    }
+                ],
+                "name": "PredictionMade",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_minBetAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setMinBetAmount",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_treasuryFee",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "setTreasuryFee",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "setWinningSide",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "admin",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "currentRound",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_roundNumber",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getClosingTime",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "ethAmount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getConversionRate",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getCurrentRound",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getCurrentTime",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_roundNumber",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getDownPayout",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getPredicted",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getPrice",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_roundNumber",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getPrizePool",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_roundNumber",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getRoundData",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getStartingPrice",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_roundNumber",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getUpPayout",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getVersion",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getWinningSide",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "MAX_TREASURY_FEE",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "minBetAmount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "treasuryAmount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "treasuryFee",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+        var contractAddress = "0x8BD313E161b6334CfEc9fED153Bc6dD8A506D4e7";
+        var admin = "0x23ee5898b27a2e639d34008bee122b8e8af2dc2d";
+
+        async function connectWallet() {
+            if (window.ethereum != null) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    let accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+                    wallet_address = accounts[0];
+                    console.log("Account now enabled!");
+                    walletAddressP.innerText = wallet_address;
+                    console.log(wallet_address);
+                    var contract = new web3.eth.Contract(contractABI, contractAddress);
+                    swichNetwork(421611);
+                    checkBalance();
+                    checkAdmin();
+                    //getCurrentRound();
+                    //getLatestRound();
+                    //getBtcPrice();
+                    //getPayoutRates();
+                    getRoundData();
+                } catch (error) {
+                    console.log("Account access denied!");
+                }
+            }
+        }
+
+        const getNetworkId = async () => {
+            const currentChainId = await web3.eth.net.getId(); //web3.eth
+            return currentChainId;
+        }
+
+        const swichNetwork = async (chainId) => {
+            const currentChainId = await getNetworkId()
+            if (currentChainId !== chainId) {
+                try {
+                    await web3.currentProvider.request({ //web3.currentProvider
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: Web3.utils.toHex(chainId) }],
+                    });
+                    console.log("Successfully switched networks.");
+                } catch (switchError) {
+                    // This error code indicates that the chain has not been added to MetaMask.
+                    if (switchError.code === 4902) {
+                        alert('add the chain id of the Rinkeby testnet: 3')
+                    }
+                }
+            }
+        }
+
+        const checkAdmin = async () => {
+            if (wallet_address == admin) {
+                createRoundBtn.style.display = "block";
+                announceWinningSideBtn.style.display = "block";
+                claimTreasuryBtn.style.display = "block";
+            }
+        }
+
+        const getRoundData = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            let currentRound;
+            await contract.methods.getCurrentRound().call({ from: wallet_address }).then(result => {
+                console.log("Current round: " + String(result));
+                currentRoundP.innerText += String(result - 1);
+                nextRoundP.innerText += String(result);
+                currentRound = parseInt(result);
+            });
+
+            contract.methods.getClosingTime(currentRound - 1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                closingTime = result;
+            });
+            contract.methods.getClosingTime(currentRound - 2).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                closingTimeOld = result;
+            });
+            contract.methods.getCurrentTime().call({ from: wallet_address }).then(result => {
+                console.log(result);
+                currentTime = result;
+            });
+            setTimeout(showClaimReward, (closingTime - currentTime) * 1000);
+            //Show a timer on the website
+            showTimerNext();
+            showTimer();
+            contract.methods.getConversionRate(1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                bitcoinPrice.innerText += String(result);
+                bitcoinPrice2.innerText += String(result);
+            });
+            contract.methods.getStartingPrice().call({ from: wallet_address }).then(result => {
+                console.log(result);
+                document.getElementById("startingPrice").innerText += String(result / (10 ** 18));
+            });
+            contract.methods.getUpPayout(currentRound - 1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                upPayoutBtnNext.innerText += String(result) + " Payout";
+            });
+            contract.methods.getDownPayout(currentRound - 1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                downPayoutBtnNext.innerText += String(result) + " Payout";
+            });
+            contract.methods.getPrizePool(currentRound - 1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                result = web3.utils.fromWei(result, "ether");
+                nextPrizePoolP.innerText += String(result);
+            });
+            contract.methods.getUpPayout(currentRound - 2).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                upPayoutBtn.innerText += String(result) + " Payout";
+            });
+            contract.methods.getDownPayout(currentRound - 2).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                downPayoutBtn.innerText += String(result) + " Payout";
+            });
+            contract.methods.getPrizePool(currentRound - 2).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                result = web3.utils.fromWei(result, "ether");
+                prizePoolP.innerText += String(result);
+            });
+        }
+
+        const getBtcPrice = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.getConversionRate(1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                bitcoinPrice.innerText += String(result);
+            });
+            contract.methods.getStartingPrice().call({ from: wallet_address }).then(result => {
+                console.log(result);
+                document.getElementById("startingPrice").innerText += String(result);
+            })
+        }
+
+        const getCurrentRound = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.getCurrentRound().call({ from: wallet_address }).then(result => {
+                console.log("Current round: " + String(result));
+                currentRoundP.innerText += String(result);
+                currentRound = parseInt(result);
+            })
+        }
+
+        const getLatestRound = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.getClosingTime(currentRound - 1).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                closingTime = result;
+            })
+            contract.methods.getCurrentTime().call({ from: wallet_address }).then(result => {
+                console.log(result);
+                currentTime = result;
+            })
+            setTimeout(showClaimReward, (closingTime - currentTime) * 1000);
+            //Show a timer on the website
+            showTimer();
+
+        }
+
+        const getPayoutRates = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            let number = currentRound - 1;
+            console.log("HERE IS THE CURRENT ROUND: " + String(currentRound) + String(number));
+            contract.methods.getUpPayout(number).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                upPayoutBtn.innerText += String(result) + " Payout";
+            });
+            contract.methods.getDownPayout(number).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                downPayoutBtn.innerText += String(result) + " Payout";
+            });
+            contract.methods.getPrizePool(number).call({ from: wallet_address }).then(result => {
+                console.log(result);
+                result = web3.utils.fromWei(result, "ether");
+                prizePoolP.innerText += String(result);
+            });
+
+
+        }
+
+        const checkBalance = async () => {
+            web3.eth.getBalance(wallet_address).then(balance => {
+                console.log(balance);
+                balanceInEther = web3.utils.fromWei(balance, "ether");
+                balanceP.innerText = balanceInEther + " ether";
+            });
+        }
+
+        const showTimerNext = () => {
+            var x = setInterval(function () {
+
+                var distance = closingTime - currentTime;
+
+                // Time calculations for days, hours, minutes and seconds
+                var hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                var minutes = Math.floor((distance % (60 * 60)) / (60));
+                var seconds = Math.floor(distance % (60));
+
+                // If the count down is over, write some text 
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("timer-next").innerText += "EXPIRED";
+                } else {
+                    document.getElementById("timer-next").innerText = hours + "h "
+                        + minutes + "m " + seconds + "s ";
+                }
+            }, 1000);
+        }
+
+        const showTimer = () => {
+            var x = setInterval(function () {
+
+                var distance = closingTimeOld - currentTime;
+
+                // Time calculations for days, hours, minutes and seconds
+                var hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                var minutes = Math.floor((distance % (60 * 60)) / (60));
+                var seconds = Math.floor(distance % (60));
+
+                // If the count down is over, write some text 
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("timer").innerText += "EXPIRED";
+                } else {
+                    document.getElementById("timer").innerText = hours + "h "
+                        + minutes + "m " + seconds + "s ";
+                }
+            }, 1000);
+        }
+
+        const showClaimReward = () => {
+            claimRewardBtn.style.display = "block";
+        }
+
+        const claimReward = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.claimReward().send({ from: wallet_address }).then(result => {
+                successInfoP.innerText = "Successfully claimed reward!";
+                console.log(result);
+            })
+        }
+
+        const bullBet = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            bet_amount = betAmount.value;
+            contract.methods.bullBet().send({ from: wallet_address, value: parseInt(web3.utils.toWei(bet_amount, "ether")) }).then(result => {
+                successInfoP.innerText = "Successfully placed the prediction!";
+            })
+        }
+
+        const bearBet = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            bet_amount = betAmount.value;
+            contract.methods.bearBet().send({ from: wallet_address, value: parseInt(web3.utils.toWei(bet_amount, "ether")) }).then(result => {
+                successInfoP.innerText = "Successfully placed the prediction!";
+            })
+        }
+
+        const createRound = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.createRound().send({ from: wallet_address }).then(result => {
+                successInfoP.innerText = "Successfully created a new round!";
+                console.log(result);
+            })
+        }
+
+        const announceWinningSide = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.setWinningSide().send({ from: wallet_address }).then(result => {
+                successInfoP.innerText = "Successfully announced the winning side!";
+                console.log(result);
+            })
+        }
+
+        const claimTreasury = async () => {
+            var contract = new web3.eth.Contract(contractABI, contractAddress);
+            contract.methods.claimTreasury().send({ from: wallet_address }).then(result => {
+                successInfoP.innerText = "Successfully claimed the treasury!";
+                console.log(result);
+            })
+        }
+    </script>
+
+</body>
+
+</html>

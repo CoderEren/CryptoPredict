@@ -1,0 +1,4 @@
+/node_modules/
+.env
+contract.sol
+new_contract.sol
