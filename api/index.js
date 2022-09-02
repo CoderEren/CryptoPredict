@@ -6,8 +6,9 @@ const url = 'https://rpc.ankr.com/eth_rinkeby'
 const port = process.env.PORT || 8000;
 
 export default function hello(req, res) {
-    res.statusCode = 200;
+    var img = fs.readFileSync('../index.html');
     res.writeHead(200, { "Content-type": "text/html" });
+    res.end(img, "binary");
 }
 
 const server = http.createServer((req, res) => {
