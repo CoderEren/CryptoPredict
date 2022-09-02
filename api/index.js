@@ -5,10 +5,15 @@ const http = require("http");
 const url = 'https://rpc.ankr.com/eth_rinkeby'
 const port = process.env.PORT || 8000;
 
+export default function hello(req, res) {
+    res.statusCode = 200;
+    res.writeHead(200, { "Content-type": "text/html" });
+}
+
 const server = http.createServer((req, res) => {
     const readstream = fs.createReadStream("./index.html");
     if (req.url == "/node_modules/web3/dist/web3.min.js") {
-        fs.readFile("./node_modules/web3/dist/web3.min.js", "utf8", (err, file) => {
+        fs.readFile("../node_modules/web3/dist/web3.min.js", "utf8", (err, file) => {
             if (err) {
                 console.log(err);
             } else {
@@ -18,7 +23,7 @@ const server = http.createServer((req, res) => {
         });
 
     } else if (req.url == "/node_modules/web3/dist/web3.min.js.map") {
-        fs.readFile("./node_modules/web3/dist/web3.min.js.map", "utf8", (err, file) => {
+        fs.readFile("../node_modules/web3/dist/web3.min.js.map", "utf8", (err, file) => {
             if (err) {
                 console.log(err);
             } else {
