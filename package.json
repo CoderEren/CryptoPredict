@@ -9,7 +9,9 @@
   },
   "author": "Eren Geridonmez",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
     "web3": "^1.7.5"
   }
 }
