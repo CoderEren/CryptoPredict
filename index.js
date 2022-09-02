@@ -27,9 +27,8 @@ const server = http.createServer((req, res) => {
             }
         });
     } else if (req.url == "/") {
-        var img = fs.readFileSync('./index.html');
         res.writeHead(200, { "Content-type": "text/html" });
-        res.end(img, "binary");
+        readstream.pipe(res);
     } else if (req.url == "/bitcoin_header.svg") {
         var img = fs.readFileSync('./bitcoin_header.svg');
         res.writeHead(200, { "Content-type": "image/svg+xml" });
